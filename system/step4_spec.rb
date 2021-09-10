@@ -1,12 +1,51 @@
 require 'rails_helper'
 
-RSpec.describe 'ステップ4', type: :system do
+RSpec.describe 'step4', type: :system do
 
   let!(:user) { User.create(name: 'user_name', email: 'user@email.com', password: 'password') }
   let!(:admin) { User.create(name: 'admin_name', email: 'admin@email.com', password: 'password', admin: true) }
 
+  describe '画面遷移要件' do
+    describe '1.要件通りにパスのプレフィックスが使用できること' do
+      context 'ログアウト中の場合' do
+        it '要件通りにパスのプレフィックスが使用できること' do
+          visit new_session_path
+          visit new_user_path
+        end
+      end
+      context '一般ユーザでログイン中の場合' do
+        before do
+          visit root_path
+          find('#sign-in').click
+          find('input[name="session[email]"]').set(user.email)
+          find('input[name="session[password]"]').set(user.password)
+          find('#create-session').click
+        end
+        it '要件通りにパスのプレフィックスが使用できること' do
+          visit user_path(user)
+          visit edit_user_path(user)
+        end
+      end
+      context '管理者でログイン中の場合' do
+        before do
+          visit root_path
+          find('#sign-in').click
+          find('input[name="session[email]"]').set(admin.email)
+          find('input[name="session[password]"]').set(admin.password)
+          find('#create-session').click
+        end
+        it '要件通りにパスのプレフィックスが使用できること' do
+          visit admin_users_path
+          visit new_admin_user_path
+          visit admin_user_path(user)
+          visit edit_admin_user_path(user)
+        end
+      end
+    end
+  end
+
   describe '画面設計要件' do
-    describe '要件通りにHTMLのid属性やclass属性が付与されていること' do
+    describe '2.要件通りにHTMLのid属性やclass属性が付与されていること' do
       context 'ログアウト中の場合' do
         it 'グローバルナビゲーション' do
           visit root_path
@@ -92,47 +131,8 @@ RSpec.describe 'ステップ4', type: :system do
     end
   end
 
-  describe '画面遷移要件' do
-    describe '要件通りにパスのプレフィックスが使用できること' do
-      context 'ログアウト中の場合' do
-        it '要件通りにパスのプレフィックスが使用できること' do
-          visit new_session_path
-          visit new_user_path
-        end
-      end
-      context '一般ユーザでログイン中の場合' do
-        before do
-          visit root_path
-          find('#sign-in').click
-          find('input[name="session[email]"]').set(user.email)
-          find('input[name="session[password]"]').set(user.password)
-          find('#create-session').click
-        end
-        it '要件通りにパスのプレフィックスが使用できること' do
-          visit user_path(user)
-          visit edit_user_path(user)
-        end
-      end
-      context '管理者でログイン中の場合' do
-        before do
-          visit root_path
-          find('#sign-in').click
-          find('input[name="session[email]"]').set(admin.email)
-          find('input[name="session[password]"]').set(admin.password)
-          find('#create-session').click
-        end
-        it '要件通りにパスのプレフィックスが使用できること' do
-          visit admin_users_path
-          visit new_admin_user_path
-          visit admin_user_path(user)
-          visit edit_admin_user_path(user)
-        end
-      end
-    end
-  end
-
   describe '画面設計要件' do
-    describe '要件通りに各画面に文字やリンク、ボタンを表示すること' do
+    describe '3.要件通りに各画面に文字やリンク、ボタンを表示すること' do
       context 'ログアウト中の場合' do
         it 'グローバルナビゲーション' do
           visit root_path
@@ -256,7 +256,7 @@ RSpec.describe 'ステップ4', type: :system do
       end
     end
 
-    describe 'ユーザ一覧画面には、各ユーザが作成しているタスクの数を表示させること' do
+    describe '4.ユーザ一覧画面には、各ユーザが作成しているタスクの数を表示させること' do
       before do
         visit new_session_path
         find('input[name="session[email]"]').set(admin.email)
@@ -277,7 +277,7 @@ RSpec.describe 'ステップ4', type: :system do
       end
     end
 
-    describe 'ユーザ一覧画面の管理者権限の項目で管理者権限がある場合は「あり」、ない場合は「なし」を表示させること' do
+    describe '5.ユーザ一覧画面の管理者権限の項目で管理者権限がある場合は「あり」、ない場合は「なし」を表示させること' do
       before do
         visit new_session_path
         find('input[name="session[email]"]').set(admin.email)
@@ -297,7 +297,7 @@ RSpec.describe 'ステップ4', type: :system do
       end
     end
 
-    describe 'ユーザ詳細画面の管理者権限の項目で管理者権限がある場合は「あり」、ない場合は「なし」を表示させること' do
+    describe '6.ユーザ詳細画面の管理者権限の項目で管理者権限がある場合は「あり」、ない場合は「なし」を表示させること' do
       before do
         visit new_session_path
         find('input[name="session[email]"]').set(admin.email)
@@ -316,7 +316,7 @@ RSpec.describe 'ステップ4', type: :system do
       end
     end
 
-    describe 'ユーザ詳細画面にそのユーザが作成したタスクのタイトル、内容、終了期限、優先度、ステータスを一覧で表示させること' do
+    describe '7.ユーザ詳細画面にそのユーザが作成したタスクのタイトル、内容、終了期限、優先度、ステータスを一覧で表示させること' do
       before do
         visit new_session_path
         find('input[name="session[email]"]').set(admin.email)
@@ -345,7 +345,7 @@ RSpec.describe 'ステップ4', type: :system do
     end
   end
 
-  describe '画面遷移要件' do
+  describe '8.画面遷移要件' do
     describe '画面遷移図通りに遷移させること' do
       context 'ログアウト中の場合' do
         it 'グローバルナビゲーションのリンクを要件通りに遷移させること' do
@@ -505,7 +505,7 @@ RSpec.describe 'ステップ4', type: :system do
   end
 
   describe '機能要件' do
-    describe 'ユーザを削除するリンクをクリックした際、確認ダイアログに「本当に削除しても良いですか？」という文字を表示させること' do
+    describe '9.ユーザを削除するリンクをクリックした際、確認ダイアログに「本当に削除しても良いですか？」という文字を表示させること' do
       before do
         visit new_session_path
         find('input[name="session[email]"]').set(admin.email)
@@ -519,28 +519,7 @@ RSpec.describe 'ステップ4', type: :system do
       end
     end
 
-    describe 'ユーザとタスクにアソシエーションを組み、タスク一覧画面に自分が作成したタスクのみ表示させること' do
-      let!(:second_user) { User.create(name: 'second_user_name', email: 'second_user@email.com', password: 'password') }
-      before do
-        visit new_session_path
-        find('input[name="session[email]"]').set(user.email)
-        find('input[name="session[password]"]').set(user.password)
-        click_button 'ログイン'
-      end
-      it 'ユーザとタスクにアソシエーションを組み、タスク一覧画面に自分が作成したタスクのみ表示させること' do
-        5.times do |n|
-          Task.create(title: "task_title_#{n}", description: "task_description_#{n}", deadline_on: Date.today, priority: 0, status: 0, user_id: user.id)
-          Task.create(title: "second_user_task_title_#{n}", description: "task_description_#{n}", deadline_on: Date.today, priority: 0, status: 0, user_id: second_user.id)
-        end
-        visit tasks_path
-        5.times do |n|
-          expect(page).to have_content "task_title_#{n}"
-          expect(page).not_to have_content "second_user_task_title_#{n}"
-        end
-      end
-    end
-
-    describe 'アカウントの登録や編集、ユーザの登録や編集でバリデーションに失敗した場合、要件で示した条件通りにバリデーションメッセージを表示させること' do
+    describe '10.アカウントの登録や編集、ユーザの登録や編集でバリデーションに失敗した場合、要件で示した条件通りにバリデーションメッセージを表示させること' do
       context 'アカウント登録画面' do
         it 'すべてフォームが未入力の場合のバリデーションメッセージ' do
           visit new_user_path
@@ -721,7 +700,7 @@ RSpec.describe 'ステップ4', type: :system do
       end
     end
 
-    describe '要件で示した条件通りにフラッシュメッセージを表示させること' do
+    describe '11.要件で示した条件通りにフラッシュメッセージを表示させること' do
       context 'アカウントの登録に成功した場合' do
         it '「アカウントを登録しました」というフラッシュメッセージを表示させること' do
           visit new_user_path
@@ -830,7 +809,40 @@ RSpec.describe 'ステップ4', type: :system do
       end
     end
 
-    describe 'ログインをせずにログイン画面とアカウント登録画面以外にアクセスした場合、ログインページに遷移させ「ログインしてください」というフラッシュメッセージを表示させること' do
+    describe '12.メールアドレスの大文字と小文字の区別をなくす設定を追加すること' do
+      it 'すでにあるメールアドレスの文字サイズを変えて登録しようとした場合、「メールアドレスはすでに使用されています」というバリデーションメッセージが表示される' do
+        visit new_user_path
+        find('input[name="user[name]"]').set('new_user_name')
+        find('input[name="user[email]"]').set('User@email.com')
+        find('input[name="user[password]"]').set('new_password')
+        find('input[name="user[password_confirmation]"]').set('new_password')
+        click_button '登録する'
+        expect(page).to have_content 'メールアドレスはすでに使用されています'
+      end
+    end
+
+    describe '13.ユーザとタスクにアソシエーションを組み、タスク一覧画面に自分が作成したタスクのみ表示させること' do
+      let!(:second_user) { User.create(name: 'second_user_name', email: 'second_user@email.com', password: 'password') }
+      before do
+        visit new_session_path
+        find('input[name="session[email]"]').set(user.email)
+        find('input[name="session[password]"]').set(user.password)
+        click_button 'ログイン'
+      end
+      it 'ユーザとタスクにアソシエーションを組み、タスク一覧画面に自分が作成したタスクのみ表示させること' do
+        5.times do |n|
+          Task.create(title: "task_title_#{n}", description: "task_description_#{n}", deadline_on: Date.today, priority: 0, status: 0, user_id: user.id)
+          Task.create(title: "second_user_task_title_#{n}", description: "task_description_#{n}", deadline_on: Date.today, priority: 0, status: 0, user_id: second_user.id)
+        end
+        visit tasks_path
+        5.times do |n|
+          expect(page).to have_content "task_title_#{n}"
+          expect(page).not_to have_content "second_user_task_title_#{n}"
+        end
+      end
+    end
+
+    describe '14.ログインをせずにログイン画面とアカウント登録画面以外にアクセスした場合、ログインページに遷移させ「ログインしてください」というフラッシュメッセージを表示させること' do
       let!(:task){Task.create(title: 'task_title', description: 'task_description', deadline_on: Date.today, priority: 0, status: 0, user_id: user.id)}
       it 'タスク一覧画面にアクセスした場合' do
         visit tasks_path
@@ -879,7 +891,7 @@ RSpec.describe 'ステップ4', type: :system do
       end
     end
 
-    describe 'ログイン中にログイン画面、あるいはアカウント登録画面にアクセスした場合、タスク一覧画面に遷移させ「ログアウトしてください」というフラッシュメッセージを表示させること' do
+    describe '15.ログイン中にログイン画面、あるいはアカウント登録画面にアクセスした場合、タスク一覧画面に遷移させ「ログアウトしてください」というフラッシュメッセージを表示させること' do
       before do
         visit new_session_path
         find('input[name="session[email]"]').set(admin.email)
@@ -898,7 +910,7 @@ RSpec.describe 'ステップ4', type: :system do
       end
     end
 
-    describe '他人のタスク詳細画面、あるいはタスク編集画面にアクセスしようとした場合、タスク一覧画面に遷移させ「アクセス権限がありません」というフラッシュメッセージを表示させること' do
+    describe '16.他人のタスク詳細画面、あるいはタスク編集画面にアクセスしようとした場合、タスク一覧画面に遷移させ「アクセス権限がありません」というフラッシュメッセージを表示させること' do
       let!(:second_user) { User.create(name: 'second_user_name', email: 'second_user@email.com', password: 'password') }
       let!(:second_user_task){Task.create(title: 'task_title', description: 'task_description', deadline_on: Date.today, priority: 0, status: 0, user_id: second_user.id)}
       before do
@@ -919,7 +931,7 @@ RSpec.describe 'ステップ4', type: :system do
       end
     end
 
-    describe 'ユーザを削除した際、そのユーザに紐づいているすべてのタスクが削除されること' do
+    describe '17.ユーザを削除した際、そのユーザに紐づいているすべてのタスクが削除されること' do
       before do
         visit new_session_path
         find('input[name="session[email]"]').set(admin.email)
@@ -938,7 +950,7 @@ RSpec.describe 'ステップ4', type: :system do
       end
     end
 
-    describe 'ユーザの登録画面と編集画面で管理者権限の付け外しができること' do
+    describe '18.ユーザの登録画面と編集画面で管理者権限の付け外しができること' do
       let!(:second_admin) { User.create(name: 'second_admin_name', email: 'second_admin@email.com', password: 'password', admin: true) }
       before do
         visit new_session_path
@@ -968,7 +980,7 @@ RSpec.describe 'ステップ4', type: :system do
       end
     end
 
-    describe '一般ユーザが管理画面（新たに作成した4つの画面のいずれか）にアクセスした場合、タスク一覧画面に遷移させ「管理者以外はアクセスできません」というフラッシュメッセージを表示させること' do
+    describe '19.一般ユーザが管理画面（新たに作成した4つの画面のいずれか）にアクセスした場合、タスク一覧画面に遷移させ「管理者以外はアクセスできません」というフラッシュメッセージを表示させること' do
       before do
         visit new_session_path
         find('input[name="session[email]"]').set(user.email)
@@ -997,7 +1009,7 @@ RSpec.describe 'ステップ4', type: :system do
       end
     end
 
-    describe '管理者が一人しかいない状態でそのユーザを削除しようとした場合、モデルのコールバックを使って削除できないよう制御し、「管理者が0人になるため削除できません」というエラーメッセージを表示させること' do
+    describe '20.管理者が一人しかいない状態でそのユーザを削除しようとした場合、モデルのコールバックを使って削除できないよう制御し、「管理者が0人になるため削除できません」というエラーメッセージを表示させること' do
       before do
         visit new_session_path
         find('input[name="session[email]"]').set(admin.email)
@@ -1012,7 +1024,7 @@ RSpec.describe 'ステップ4', type: :system do
       end
     end
 
-    describe '管理者が一人しかいない状態でそのユーザから管理者権限を外す更新をしようとした場合、モデルのコールバックを使って更新できないよう制御し、「管理者が0人になるため権限を変更できません」というエラーメッセージを表示させること' do
+    describe '21.管理者が一人しかいない状態でそのユーザから管理者権限を外す更新をしようとした場合、モデルのコールバックを使って更新できないよう制御し、「管理者が0人になるため権限を変更できません」というエラーメッセージを表示させること' do
       before do
         visit new_session_path
         find('input[name="session[email]"]').set(admin.email)

@@ -1,9 +1,11 @@
 require 'rails_helper'
 
-RSpec.describe 'ステップ2', type: :system do
+RSpec.describe 'step2', type: :system do
   describe '開発要件' do
+
     let!(:task) { Task.create(title: 'task_title', content: 'task_content') }
-    describe '要件通りに各画面の文字やリンク、ボタンを国際化すること' do
+
+    describe '1.i18nを使って要件通りに文字やリンク、ボタンを国際化すること' do
       it 'グローバルナビゲーション' do
         visit root_path
         expect(page).to have_selector '#tasks-index', text: 'タスク一覧'
@@ -83,20 +85,27 @@ RSpec.describe 'ステップ2', type: :system do
         end
       end
     end
-    describe 'タスク一覧画面に表示させる作成日時を、あなたの住んでいる地域の時刻に設定すること' do
+    describe '2.タスク一覧画面に表示させる作成日時を、あなたの住んでいる地域の時刻に設定すること' do
       it 'タスク一覧画面に「UTC」の文字が表示されていないこと' do
         visit tasks_path
         expect(page).not_to have_content "UTC"
       end
     end
+    describe '3.データベースのデータを読み書きする際の時刻を、あなたの住んでいる地域の時刻に設定すること' do
+      it 'created_atカラムに「+0900」が表示されること' do
+        task = Task.create(title: 'task_title', content: 'task_content')
+        expect(task.created_at.to_s).to include('+0900')
+      end
+    end
   end
+
   describe '機能要件' do
     before do
       50.times do |n|
         Task.create(title: "task_title_#{n+1}", content: "task_content_#{n+1}")
       end
     end
-    describe 'タスク一覧画面でタスクを作成日時の降順で表示させること' do
+    describe '4.タスク一覧画面でタスクを作成日時の降順で表示させること' do
       it 'タスク一覧画面でタスクを作成日時の降順で表示させること' do
         visit tasks_path
         tasks = all('tbody tr')
@@ -112,7 +121,7 @@ RSpec.describe 'ステップ2', type: :system do
         expect(tasks[9].text).to include('task_title_41')
       end
     end
-    describe 'kaminariのgemを使って、タスク一覧画面にページネーションを実装し、1ページあたり10件のタスクを表示させること' do
+    describe '5.kaminariのgemを使って、タスク一覧画面にページネーションを実装し、1ページあたり10件のタスクを表示させること' do
       it 'タスク一覧画面にkaminariを適用させた際に作られるpaginationクラスが存在すること' do
         visit tasks_path
         expect(page).to have_css '.pagination'

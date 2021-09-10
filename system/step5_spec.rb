@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'ステップ5', type: :system do
+RSpec.describe 'step5', type: :system do
 
   let!(:user) { User.create(name: 'user_name', email: 'user@email.com', password: 'password') }
   let!(:admin) { User.create(name: 'admin_name', email: 'admin@email.com', password: 'password', admin: true) }
@@ -9,8 +9,41 @@ RSpec.describe 'ステップ5', type: :system do
   let!(:label_created_by_user) { Label.create(name: 'label_name', user: user)}
   let!(:label_created_by_admin) { Label.create(name: 'label_name', user: admin)}
 
+  describe '画面遷移要件' do
+    describe '1.要件通りにパスのプレフィックスが使用できること' do
+      context '一般ユーザでログイン中の場合' do
+        before do
+          visit root_path
+          click_link 'ログイン'
+          find('input[name="session[email]"]').set(user.email)
+          find('input[name="session[password]"]').set(user.password)
+          click_button 'ログイン'
+        end
+        it '要件通りにパスのプレフィックスが使用できること' do
+          visit labels_path
+          visit new_label_path
+          visit edit_label_path(label_created_by_user)
+        end
+      end
+      context '管理者でログイン中の場合' do
+        before do
+          visit root_path
+          find('#sign-in').click
+          find('input[name="session[email]"]').set(admin.email)
+          find('input[name="session[password]"]').set(admin.password)
+          find('#create-session').click
+        end
+        it '要件通りにパスのプレフィックスが使用できること' do
+          visit labels_path
+          visit new_label_path
+          visit edit_label_path(label_created_by_admin)
+        end
+      end
+    end
+  end
+
   describe '画面設計要件' do
-    describe '要件通りにHTMLのid属性やclass属性が付与されていること' do
+    describe '2.要件通りにHTMLのid属性やclass属性が付与されていること' do
       context 'ログアウト中の場合' do
         it 'グローバルナビゲーション' do
           visit root_path
@@ -47,63 +80,8 @@ RSpec.describe 'ステップ5', type: :system do
     end
   end
 
-  describe '画面遷移要件' do
-    describe '要件通りにパスのプレフィックスが使用できること' do
-      context '一般ユーザでログイン中の場合' do
-        before do
-          visit root_path
-          click_link 'ログイン'
-          find('input[name="session[email]"]').set(user.email)
-          find('input[name="session[password]"]').set(user.password)
-          click_button 'ログイン'
-        end
-        it '要件通りにパスのプレフィックスが使用できること' do
-          visit labels_path
-          visit new_label_path
-          visit edit_label_path(label_created_by_user)
-        end
-      end
-      context '管理者でログイン中の場合' do
-        before do
-          visit root_path
-          find('#sign-in').click
-          find('input[name="session[email]"]').set(admin.email)
-          find('input[name="session[password]"]').set(admin.password)
-          find('#create-session').click
-        end
-        it '要件通りにパスのプレフィックスが使用できること' do
-          visit labels_path
-          visit new_label_path
-          visit edit_label_path(label_created_by_admin)
-        end
-      end
-    end
-  end
-
-  describe '開発要件' do
-    before do
-      visit root_path
-      find('#sign-in').click
-      find('input[name="session[email]"]').set(admin.email)
-      find('input[name="session[password]"]').set(admin.password)
-      find('#create-session').click
-    end
-    describe 'ラベルの検索フォームはステップ3で実装したタスク一覧画面の検索フォームに追加する形で実装すること' do
-      it 'ラベルの検索フォームはステップ3で実装したタスク一覧画面の検索フォームに追加する形で実装すること' do
-        visit tasks_path
-        expect(page).to have_css '#search_label_id'
-      end
-    end
-    describe 'ラベルの検索フォームにはselectを使用し、デフォルト値は空にすること' do
-      it 'ラベルの検索フォームにはselectを使用し、デフォルト値は空にすること' do
-        visit tasks_path
-        expect(find('#search_label_id').all('option')[0].text).to be_blank
-      end
-    end
-  end
-
   describe '画面設計要件' do
-    describe '要件通りに各画面に文字やリンク、ボタンを表示すること' do
+    describe '3.要件通りに各画面に文字やリンク、ボタンを表示すること' do
       context 'ログアウト中の場合' do
         it 'グローバルナビゲーション' do
           visit root_path
@@ -192,8 +170,7 @@ RSpec.describe 'ステップ5', type: :system do
         end
       end
     end
-
-    describe 'ラベル一覧画面には、ラベルに紐づいているタスクの数を表示させること' do
+    describe '4.ラベル一覧画面には、ラベルに紐づいているタスクの数を表示させること' do
       before do
         visit new_session_path
         find('input[name="session[email]"]').set(user.email)
@@ -209,8 +186,7 @@ RSpec.describe 'ステップ5', type: :system do
         expect(page).to have_content(3)
       end
     end
-
-    describe 'タスクの登録、編集画面に「ラベル」という名前のフォームラベルと、ラベルを選択するチェックボックスを表示させること' do
+    describe '5.タスクの登録、編集画面に「ラベル」という名前のフォームラベルと、ラベルを選択するチェックボックスを表示させること' do
       before do
         visit new_session_path
         find('input[name="session[email]"]').set(user.email)
@@ -228,8 +204,7 @@ RSpec.describe 'ステップ5', type: :system do
         expect(find('input[type="checkbox"]')).to be_visible
       end
     end
-
-    describe 'タスク編集画面では、タスクに紐づいているラベルにチェックが入った状態で表示させること' do
+    describe '6.タスク編集画面では、タスクに紐づいているラベルにチェックが入った状態で表示させること' do
       before do
         visit new_session_path
         find('input[name="session[email]"]').set(user.email)
@@ -252,8 +227,7 @@ RSpec.describe 'ステップ5', type: :system do
         expect(page).to have_unchecked_field('label_10')
       end
     end
-
-    describe 'タスク詳細画面に「ラベル」という項目を追加し、そのタスクに紐づいているラベル名をすべて表示させること' do
+    describe '7.タスク詳細画面に「ラベル」という項目を追加し、そのタスクに紐づいているラベル名をすべて表示させること' do
       before do
         visit new_session_path
         find('input[name="session[email]"]').set(user.email)
@@ -280,7 +254,7 @@ RSpec.describe 'ステップ5', type: :system do
   end
 
   describe '画面遷移要件' do
-    describe '画面遷移図通りに遷移させること' do
+    describe '8.画面遷移図通りに遷移させること' do
       before do
         visit new_session_path
         find('input[name="session[email]"]').set(user.email)
@@ -341,76 +315,30 @@ RSpec.describe 'ステップ5', type: :system do
     end
   end
 
+  describe '基本要件' do
+    before do
+      visit root_path
+      find('#sign-in').click
+      find('input[name="session[email]"]').set(admin.email)
+      find('input[name="session[password]"]').set(admin.password)
+      find('#create-session').click
+    end
+    describe '9.ラベルの検索フォームはステップ3で実装したタスク一覧画面の検索フォームに追加する形で実装すること' do
+      it 'ラベルの検索フォームはステップ3で実装したタスク一覧画面の検索フォームに追加する形で実装すること' do
+        visit tasks_path
+        expect(page).to have_css '#search_label_id'
+      end
+    end
+    describe '10.ラベルの検索フォームにはselectを使用し、デフォルト値は空にすること' do
+      it 'ラベルの検索フォームにはselectを使用し、デフォルト値は空にすること' do
+        visit tasks_path
+        expect(find('#search_label_id').all('option')[0].text).to be_blank
+      end
+    end
+  end
+
   describe '機能要件' do
-    describe 'ラベルを削除するリンクをクリックした際、確認ダイアログに「本当に削除してもよろしいですか？」という文字を表示させること' do
-      before do
-        visit new_session_path
-        find('input[name="session[email]"]').set(user.email)
-        find('input[name="session[password]"]').set(user.password)
-        click_button 'ログイン'
-      end
-      it 'ラベルを削除するリンクをクリックした際、確認ダイアログに「本当に削除してもよろしいですか？」という文字を表示させること' do
-        visit labels_path
-        click_link '削除', href: label_path(label_created_by_user)
-        expect(page.driver.browser.switch_to.alert.text).to eq '本当に削除してもよろしいですか？'
-      end
-    end
-
-    describe '要件で示した条件通りにフラッシュメッセージを表示させること' do
-      before do
-        visit new_session_path
-        find('input[name="session[email]"]').set(user.email)
-        find('input[name="session[password]"]').set(user.password)
-        click_button 'ログイン'
-      end
-      context 'ラベルの登録に成功した場合' do
-        it '「ラベルを登録しました」というフラッシュメッセージを表示させること' do
-          visit new_label_path
-          find('input[name="label[name]"]').set('new_label_name')
-          click_button '登録する'
-          expect(page).to have_content 'ラベルを登録しました'
-        end
-      end
-      context 'ラベルの更新に成功した場合' do
-        it '「ラベルを更新しました」というフラッシュメッセージを表示させること' do
-          visit edit_label_path(label_created_by_user)
-          find('input[name="label[name]"]').set('new_label_name')
-          click_button '更新する'
-          expect(page).to have_content 'ラベルを更新しました'
-        end
-      end
-      context 'ラベルを削除した場合' do
-        it '「ラベルを削除しました」というフラッシュメッセージを表示させること' do
-          visit labels_path
-          click_link '削除', href: label_path(label_created_by_user)
-          page.driver.browser.switch_to.alert.accept
-          expect(page).to have_content 'ラベルを削除しました'
-        end
-      end
-    end
-
-    describe 'ラベルの名前を未入力で登録、更新しようとした際、「名前を入力してください」というバリデーションメッセージを表示させること' do
-      before do
-        visit new_session_path
-        find('input[name="session[email]"]').set(user.email)
-        find('input[name="session[password]"]').set(user.password)
-        click_button 'ログイン'
-      end
-      it 'ラベルの名前を未入力で登録しようとした際、「名前を入力してください」というバリデーションメッセージを表示させること' do
-        visit new_label_path
-        find('input[name="label[name]"]').set('')
-        click_button '登録する'
-        expect(page).to have_content '名前を入力してください'
-      end
-      it 'ラベルの名前を未入力で更新しようとした際、「名前を入力してください」というバリデーションメッセージを表示させること' do
-        visit edit_label_path(label_created_by_user)
-        find('input[name="label[name]"]').set('')
-        click_button '更新する'
-        expect(page).to have_content '名前を入力してください'
-      end
-    end
-
-    describe 'タスクを登録、編集する際、ラベル付けできるようにすること' do
+    describe '11.タスクを登録、編集する際、ラベル付けできるようにすること' do
       before do
         visit new_session_path
         find('input[name="session[email]"]').set(user.email)
@@ -439,7 +367,7 @@ RSpec.describe 'ステップ5', type: :system do
       end
     end
 
-    describe '1つのタスクに対し、複数のラベルを登録できるようにすること' do
+    describe '12.1つのタスクに対し、複数のラベルを登録できるようにすること' do
       before do
         visit new_session_path
         find('input[name="session[email]"]').set(user.email)
@@ -494,7 +422,75 @@ RSpec.describe 'ステップ5', type: :system do
       end
     end
 
-    describe '登録したラベルは、そのラベルを登録したユーザにしか使えないようにすること' do
+    describe '13.ラベルを削除するリンクをクリックした際、確認ダイアログに「本当に削除してもよろしいですか？」という文字を表示させること' do
+      before do
+        visit new_session_path
+        find('input[name="session[email]"]').set(user.email)
+        find('input[name="session[password]"]').set(user.password)
+        click_button 'ログイン'
+      end
+      it 'ラベルを削除するリンクをクリックした際、確認ダイアログに「本当に削除してもよろしいですか？」という文字を表示させること' do
+        visit labels_path
+        click_link '削除', href: label_path(label_created_by_user)
+        expect(page.driver.browser.switch_to.alert.text).to eq '本当に削除してもよろしいですか？'
+      end
+    end
+
+    describe '14.要件通りにフラッシュメッセージを表示させること' do
+      before do
+        visit new_session_path
+        find('input[name="session[email]"]').set(user.email)
+        find('input[name="session[password]"]').set(user.password)
+        click_button 'ログイン'
+      end
+      context 'ラベルの登録に成功した場合' do
+        it '「ラベルを登録しました」というフラッシュメッセージを表示させること' do
+          visit new_label_path
+          find('input[name="label[name]"]').set('new_label_name')
+          click_button '登録する'
+          expect(page).to have_content 'ラベルを登録しました'
+        end
+      end
+      context 'ラベルの更新に成功した場合' do
+        it '「ラベルを更新しました」というフラッシュメッセージを表示させること' do
+          visit edit_label_path(label_created_by_user)
+          find('input[name="label[name]"]').set('new_label_name')
+          click_button '更新する'
+          expect(page).to have_content 'ラベルを更新しました'
+        end
+      end
+      context 'ラベルを削除した場合' do
+        it '「ラベルを削除しました」というフラッシュメッセージを表示させること' do
+          visit labels_path
+          click_link '削除', href: label_path(label_created_by_user)
+          page.driver.browser.switch_to.alert.accept
+          expect(page).to have_content 'ラベルを削除しました'
+        end
+      end
+    end
+
+    describe '15.ラベルの名前を未入力で登録、更新しようとした際、「名前を入力してください」というバリデーションメッセージを表示させること' do
+      before do
+        visit new_session_path
+        find('input[name="session[email]"]').set(user.email)
+        find('input[name="session[password]"]').set(user.password)
+        click_button 'ログイン'
+      end
+      it 'ラベルの名前を未入力で登録しようとした際、「名前を入力してください」というバリデーションメッセージを表示させること' do
+        visit new_label_path
+        find('input[name="label[name]"]').set('')
+        click_button '登録する'
+        expect(page).to have_content '名前を入力してください'
+      end
+      it 'ラベルの名前を未入力で更新しようとした際、「名前を入力してください」というバリデーションメッセージを表示させること' do
+        visit edit_label_path(label_created_by_user)
+        find('input[name="label[name]"]').set('')
+        click_button '更新する'
+        expect(page).to have_content '名前を入力してください'
+      end
+    end
+
+    describe '16.登録したラベルは、そのラベルを登録したユーザにしか使えないようにすること' do
       let!(:second_user) { User.create(name: 'second_user_name', email: 'second_user@email.com', password: 'password') }
       before do
         visit new_session_path
@@ -532,7 +528,7 @@ RSpec.describe 'ステップ5', type: :system do
       end
     end
 
-    describe 'ラベルを1つ指定し検索することで、そのラベルが貼られたタスクのみ表示させること' do
+    describe '17.ラベルを1つ指定し検索することで、そのラベルが貼られたタスクのみ表示させること' do
       before do
         visit new_session_path
         find('input[name="session[email]"]').set(user.email)

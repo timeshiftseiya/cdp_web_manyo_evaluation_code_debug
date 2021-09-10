@@ -1,10 +1,8 @@
-require 'rails_helper'
-
-RSpec.describe 'ステップ1', type: :system do
+RSpec.describe 'step1', type: :system do
   let!(:task) { Task.create(title: 'task_title', content: 'task_content') }
 
   describe '画面遷移要件' do
-    describe '要件通りにパスのプレフィックスが生成されていること' do
+    describe '1.要件通りにパスのプレフィックスが生成されていること' do
       it '要件通りにパスのプレフィックスが生成されていること' do
         visit tasks_path
         visit new_task_path
@@ -19,7 +17,7 @@ RSpec.describe 'ステップ1', type: :system do
   end
 
   describe '画面設計要件' do
-    describe '要件通りに各画面に文字やリンク、ボタンを表示すること' do
+    describe '2.要件通りに各画面に文字やリンク、ボタンを表示すること' do
       it 'グローバルナビゲーション' do
         visit root_path
         expect(page).to have_link 'Tasks Index'
@@ -55,7 +53,7 @@ RSpec.describe 'ステップ1', type: :system do
         expect(page).to have_link 'Back'
       end
     end
-    describe '要件通りにHTMLのid属性とclass属性が付与されていること' do
+    describe '3.要件通りにHTMLのid属性とclass属性が付与されていること' do
       it 'グローバルナビゲーション' do
         visit root_path
         expect(page).to have_selector '#tasks-index', text: 'Tasks Index'
@@ -83,7 +81,7 @@ RSpec.describe 'ステップ1', type: :system do
         expect(page).to have_selector '#back', text: 'Back'
       end
     end
-    describe '一覧画面に登録したタスクのタイトルと説明、作成日時を一覧で表示すること' do
+    describe '4.一覧画面に登録したタスクのタイトルと説明、作成日時を一覧で表示すること' do
       it '一覧画面に登録したタスクのタイトルと説明、作成日時を一覧で表示すること' do
         visit tasks_path
         expect(page).to have_content task.title
@@ -91,7 +89,7 @@ RSpec.describe 'ステップ1', type: :system do
         expect(page).to have_content task.created_at
       end
     end
-    describe '詳細画面にそのタスクのタイトルと説明、作成日時を表示すること' do
+    describe '5.詳細画面にそのタスクのタイトルと説明、作成日時を表示すること' do
       it '詳細画面にそのタスクのタイトルと説明、作成日時を表示すること' do
         visit task_path(task)
         expect(page).to have_content task.title
@@ -102,7 +100,7 @@ RSpec.describe 'ステップ1', type: :system do
   end
 
   describe '画面遷移要件' do
-    describe '画面遷移図通りに遷移させること' do
+    describe '6.画面遷移図通りに遷移させること' do
       it 'グローバルナビゲーションのリンクを要件通りに遷移させること' do
         visit tasks_path
         click_link 'New Task'
@@ -174,15 +172,16 @@ RSpec.describe 'ステップ1', type: :system do
       end
     end
   end
+
   describe '機能要件' do
-    describe 'タスクを削除するリンクをクリックした際、確認ダイアログに「本当に削除しても良いですか？」という文字を表示させること' do
+    describe '7.タスクを削除するリンクをクリックした際、確認ダイアログに「本当に削除しても良いですか？」という文字を表示させること' do
       it 'タスクを削除するリンクをクリックした際、確認ダイアログに"本当に削除しても良いですか？"という文字を表示させること' do
         visit tasks_path
         click_link 'Destroy'
         expect(page.driver.browser.switch_to.alert.text).to eq 'Are you sure?'
       end
     end
-    describe 'タスクの登録や編集でバリデーションに失敗した場合、以下の条件通りにバリデーションメッセージを表示させること' do
+    describe '8.タスクの登録や編集でバリデーションに失敗した場合、以下の条件通りにバリデーションメッセージを表示させること' do
       context 'タスク登録画面' do
         it 'タイトルが未入力の場合' do
           visit new_task_path
@@ -232,7 +231,7 @@ RSpec.describe 'ステップ1', type: :system do
         end
       end
     end
-    describe '要件で示した条件通りにフラッシュメッセージを表示させること' do
+    describe '9.要件で示した条件通りにフラッシュメッセージを表示させること' do
       context 'タスクの登録に成功した場合' do
         it '「Task was successfully created.」というフラッシュメッセージを表示させること' do
           visit new_task_path
