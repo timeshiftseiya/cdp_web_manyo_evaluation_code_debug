@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe 'ステップ1', type: :system do
-  let!(:task) { Task.create(id: 1, title: 'task_title', content: 'task_content') }
+  let!(:task) { Task.create(title: 'task_title', content: 'task_content') }
 
   describe '画面遷移要件' do
     describe '要件通りにパスのプレフィックスが生成されていること' do
@@ -41,13 +41,13 @@ RSpec.describe 'ステップ1', type: :system do
         expect(page).to have_link 'Back'
       end
       it 'タスク詳細画面' do
-        visit task_path(1)
+        visit task_path(task)
         expect(page).to have_content 'Show Task Page'
         expect(page).to have_link 'Edit'
         expect(page).to have_link 'Back'
       end
       it 'タスク編集画面' do
-        visit edit_task_path(1)
+        visit edit_task_path(task)
         expect(page).to have_content 'Edit Task Page'
         expect(page).to have_selector 'label', text: 'Title'
         expect(page).to have_selector 'label', text: 'Content'
@@ -73,12 +73,12 @@ RSpec.describe 'ステップ1', type: :system do
         expect(page).to have_selector '#back', text: 'Back'
       end
       it '詳細画面' do
-        visit task_path(1)
+        visit task_path(task)
         expect(page).to have_selector '#edit-task', text: 'Edit'
         expect(page).to have_selector '#back', text: 'Back'
       end
       it '編集画面' do
-        visit edit_task_path(1)
+        visit edit_task_path(task)
         expect(page).to have_selector '#update-task'
         expect(page).to have_selector '#back', text: 'Back'
       end
@@ -93,7 +93,7 @@ RSpec.describe 'ステップ1', type: :system do
     end
     describe '詳細画面にそのタスクのタイトルと説明、作成日時を表示すること' do
       it '詳細画面にそのタスクのタイトルと説明、作成日時を表示すること' do
-        visit task_path(1)
+        visit task_path(task)
         expect(page).to have_content task.title
         expect(page).to have_content task.content
         expect(page).to have_content task.created_at
@@ -133,7 +133,7 @@ RSpec.describe 'ステップ1', type: :system do
         expect(page).to have_content 'Edit Task Page'
       end
       it '「Update Task」をクリックした場合、ページタイトルに「Index Task Page」が表示される' do
-        visit edit_task_path(1)
+        visit edit_task_path(task)
         find('#update-task').click
         expect(page).to have_content 'Tasks Index Page'
       end
@@ -149,12 +149,12 @@ RSpec.describe 'ステップ1', type: :system do
         expect(page).to have_content 'Tasks Index Page'
       end
       it '詳細画面の「Back」をクリックした場合、ページタイトルに「Tasks Index Page」が表示される' do
-        visit task_path(1)
+        visit task_path(task)
         find('#back').click
         expect(page).to have_content 'Tasks Index Page'
       end
       it '編集画面の「Back」をクリックした場合、ページタイトルに「Tasks Index Page」が表示される' do
-        visit edit_task_path(1)
+        visit edit_task_path(task)
         find('#back').click
         expect(page).to have_content 'Tasks Index Page'
       end
@@ -166,7 +166,7 @@ RSpec.describe 'ステップ1', type: :system do
         expect(page).to have_content 'New Task Page'
       end
       it 'タスクの編集に失敗した場合、ページタイトルに「Edit Task Page」が表示される' do
-        visit edit_task_path(1)
+        visit edit_task_path(task)
         fill_in 'Title', with: ''
         fill_in 'Content', with: ''
         find('#update-task').click
@@ -209,21 +209,21 @@ RSpec.describe 'ステップ1', type: :system do
       end
       context 'タスク編集画面' do
         it 'タイトルが未入力の場合' do
-          visit edit_task_path(1)
+          visit edit_task_path(task)
           fill_in 'Title', with: ''
           fill_in 'Content', with: ''
           find('#update-task').click
           expect(page).to have_content "Title can't be blank"
         end
         it '内容が未入力の場合' do
-          visit edit_task_path(1)
+          visit edit_task_path(task)
           fill_in 'Title', with: ''
           fill_in 'Content', with: ''
           find('#update-task').click
           expect(page).to have_content "Content can't be blank"
         end
         it 'タイトルと内容が未入力の場合' do
-          visit edit_task_path(1)
+          visit edit_task_path(task)
           fill_in 'Title', with: ''
           fill_in 'Content', with: ''
           find('#update-task').click
