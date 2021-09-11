@@ -1,10 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe 'step2', type: :system do
+
   describe '開発要件' do
-
     let!(:task) { Task.create(title: 'task_title', content: 'task_content') }
-
     describe '1.i18nを使って要件通りに文字やリンク、ボタンを国際化すること' do
       it 'グローバルナビゲーション' do
         visit root_path

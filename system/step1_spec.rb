@@ -1,4 +1,7 @@
+require 'rails_helper'
+
 RSpec.describe 'step1', type: :system do
+
   let!(:task) { Task.create(title: 'task_title', content: 'task_content') }
 
   describe '画面遷移要件' do
