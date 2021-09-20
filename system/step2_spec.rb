@@ -17,7 +17,7 @@ RSpec.describe 'step2', type: :system do
         expect(page).to have_selector '.edit-task', text: '編集'
         expect(page).to have_selector '.destroy-task', text: '削除'
         find('.destroy-task').click
-        expect(page.driver.browser.switch_to.alert.text).to eq "本当に削除してもよろしいですか？"
+        expect(page.driver.browser.switch_to.alert.text).to eq '本当に削除してもよろしいですか？'
       end
       it 'タスク登録画面' do
         visit new_task_path
@@ -80,7 +80,7 @@ RSpec.describe 'step2', type: :system do
           visit tasks_path
           click_link '削除'
           page.driver.browser.switch_to.alert.accept
-          expect(page).to have_content "タスクを削除しました"
+          expect(page).to have_content 'タスクを削除しました'
         end
       end
     end
