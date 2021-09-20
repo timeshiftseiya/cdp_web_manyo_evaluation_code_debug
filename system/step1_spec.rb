@@ -184,23 +184,23 @@ RSpec.describe 'step1', type: :system do
         expect(page.driver.browser.switch_to.alert.text).to eq 'Are you sure?'
       end
     end
-    describe '8.タスクの登録や編集でバリデーションに失敗した場合、以下の条件通りにバリデーションメッセージを表示させること' do
+    describe '8.タスクの登録や編集でバリデーションに失敗した場合、要件通りにバリデーションメッセージを表示させること' do
       context 'タスク登録画面' do
-        it 'タイトルが未入力の場合' do
+        it "タイトルが未入力の場合、「Title can't be blank」というバリデーションメッセージが表示させる" do
           visit new_task_path
           fill_in 'Title', with: ''
           fill_in 'Content', with: ''
           find('#create-task').click
           expect(page).to have_content "Title can't be blank"
         end
-        it '内容が未入力の場合' do
+        it "内容が未入力の場合、「Content can't be blank」というバリデーションメッセージが表示させる" do
           visit new_task_path
           fill_in 'Title', with: ''
           fill_in 'Content', with: ''
           find('#create-task').click
           expect(page).to have_content "Content can't be blank"
         end
-        it 'タイトルと内容が未入力の場合' do
+        it "タイトルと内容が未入力の場合、「Title can't be blank」と「Content can't be blank」というバリデーションメッセージが表示させる" do
           visit new_task_path
           fill_in 'Title', with: ''
           fill_in 'Content', with: ''
@@ -210,21 +210,21 @@ RSpec.describe 'step1', type: :system do
         end
       end
       context 'タスク編集画面' do
-        it 'タイトルが未入力の場合' do
+        it "タイトルが未入力の場合、「Title can't be blank」というバリデーションメッセージが表示させる" do
           visit edit_task_path(task)
           fill_in 'Title', with: ''
           fill_in 'Content', with: ''
           find('#update-task').click
           expect(page).to have_content "Title can't be blank"
         end
-        it '内容が未入力の場合' do
+        it "内容が未入力の場合、「Content can't be blank」というバリデーションメッセージが表示させる" do
           visit edit_task_path(task)
           fill_in 'Title', with: ''
           fill_in 'Content', with: ''
           find('#update-task').click
           expect(page).to have_content "Content can't be blank"
         end
-        it 'タイトルと内容が未入力の場合' do
+        it "タイトルと内容が未入力の場合、「Title can't be blank」と「Content can't be blank」というバリデーションメッセージが表示させる" do
           visit edit_task_path(task)
           fill_in 'Title', with: ''
           fill_in 'Content', with: ''
@@ -234,7 +234,7 @@ RSpec.describe 'step1', type: :system do
         end
       end
     end
-    describe '9.要件で示した条件通りにフラッシュメッセージを表示させること' do
+    describe '9.要件通りにフラッシュメッセージを表示させること' do
       context 'タスクの登録に成功した場合' do
         it '「Task was successfully created.」というフラッシュメッセージを表示させること' do
           visit new_task_path
