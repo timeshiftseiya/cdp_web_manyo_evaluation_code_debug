@@ -177,8 +177,8 @@ RSpec.describe 'step1', type: :system do
   end
 
   describe '機能要件' do
-    describe '7.タスクを削除するリンクをクリックした際、確認ダイアログに「本当に削除しても良いですか？」という文字を表示させること' do
-      it 'タスクを削除するリンクをクリックした際、確認ダイアログに"本当に削除しても良いですか？"という文字を表示させること' do
+    describe '7.タスクを削除するリンクをクリックした際、確認ダイアログに「Are you sure?」という文字を表示させること' do
+      it 'タスクを削除するリンクをクリックした際、確認ダイアログに「Are you sure?」という文字を表示させること' do
         visit tasks_path
         click_link 'Destroy'
         expect(page.driver.browser.switch_to.alert.text).to eq 'Are you sure?'
