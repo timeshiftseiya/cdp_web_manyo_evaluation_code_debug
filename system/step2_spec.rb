@@ -4,7 +4,7 @@ RSpec.describe 'step2', type: :system do
 
   describe '開発要件' do
     let!(:task) { Task.create(title: 'task_title', content: 'task_content') }
-    describe '1.i18nを使って要件通りに文字やリンク、ボタンを国際化すること' do
+    describe 'i18nを使って要件通りに文字やリンク、ボタンを国際化すること' do
       it 'グローバルナビゲーション' do
         visit root_path
         expect(page).to have_selector '#tasks-index', text: 'タスク一覧'
@@ -84,16 +84,24 @@ RSpec.describe 'step2', type: :system do
         end
       end
     end
-    describe '2.タスク一覧画面に表示させる作成日時を、あなたの住んでいる地域の時刻に設定すること' do
+    describe 'タスク一覧画面に表示させる作成日時を、あなたの住んでいる地域の時刻に設定すること' do
       it '作成日時に協定世界時を意味する「UTC」の文字が表示されていないこと' do
         visit tasks_path
         expect(page).not_to have_content "UTC"
       end
     end
-    describe '3.データベースのデータを読み書きする際の時刻を、あなたの住んでいる地域の時刻に設定すること' do
+    describe 'データベースのデータを読み書きする際の時刻を、あなたの住んでいる地域の時刻に設定すること' do
       it 'タスクのcreated_atカラムのデータを出力させた際、「+0900」が表示されること' do
         task = Task.create(title: 'task_title', content: 'task_content')
         expect(task.created_at.to_s).to include('+0900')
+      end
+    end
+    describe 'seedデータを使って、50件分のタスクデータを投入できるようにすること' do
+      before do
+        load Rails.root.join("db/seeds.rb")
+      end
+      it 'seedデータを使って、50件分のタスクデータを投入できるようにすること' do
+        expect(Task.all.count).to be >= 50
       end
     end
   end
@@ -104,7 +112,7 @@ RSpec.describe 'step2', type: :system do
         Task.create(title: "task_title_#{n+1}", content: "task_content_#{n+1}")
       end
     end
-    describe '4.タスク一覧画面でタスクを作成日時の降順で表示させること' do
+    describe 'タスク一覧画面でタスクを作成日時の降順で表示させること' do
       it 'タスク一覧画面でタスクを作成日時の降順で表示させること' do
         visit tasks_path
         tasks = all('tbody tr')
@@ -120,7 +128,7 @@ RSpec.describe 'step2', type: :system do
         expect(tasks[9].text).to include('task_title_41')
       end
     end
-    describe '5.kaminariのgemを使って、タスク一覧画面にページネーションを実装し、1ページあたり10件のタスクを表示させること' do
+    describe 'kaminariのgemを使って、タスク一覧画面にページネーションを実装し、1ページあたり10件のタスクを表示させること' do
       it 'タスク一覧画面にkaminariを適用させた際に作られるpaginationクラスが存在すること' do
         visit tasks_path
         expect(page).to have_css '.pagination'
