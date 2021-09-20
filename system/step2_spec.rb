@@ -12,6 +12,10 @@ RSpec.describe 'step2', type: :system do
       end
       it 'タスク一覧画面' do
         visit tasks_path
+        expect(page).to have_content 'タスク一覧ページ'
+        expect(page).to have_selector '.show-task', text: '詳細'
+        expect(page).to have_selector '.edit-task', text: '編集'
+        expect(page).to have_selector '.destroy-task', text: '削除'
         find('.destroy-task').click
         expect(page.driver.browser.switch_to.alert.text).to eq '本当に削除してもよろしいですか？'
       end
@@ -76,18 +80,18 @@ RSpec.describe 'step2', type: :system do
           visit tasks_path
           click_link '削除'
           page.driver.browser.switch_to.alert.accept
-          expect(page).to have_content 'タスクを削除しました'
+          expect(page).to have_content "タスクを削除しました"
         end
       end
     end
     describe '2.タスク一覧画面に表示させる作成日時を、あなたの住んでいる地域の時刻に設定すること' do
-      it 'タスク一覧画面に「UTC」の文字が表示されていないこと' do
+      it '作成日時に協定世界時を意味する「UTC」の文字が表示されていないこと' do
         visit tasks_path
         expect(page).not_to have_content "UTC"
       end
     end
     describe '3.データベースのデータを読み書きする際の時刻を、あなたの住んでいる地域の時刻に設定すること' do
-      it 'created_atカラムに「+0900」が表示されること' do
+      it 'タスクのcreated_atカラムのデータを出力させた際、「+0900」が表示されること' do
         task = Task.create(title: 'task_title', content: 'task_content')
         expect(task.created_at.to_s).to include('+0900')
       end
@@ -121,10 +125,11 @@ RSpec.describe 'step2', type: :system do
         visit tasks_path
         expect(page).to have_css '.pagination'
       end
-      it '1ページあたり10件のタスクを表示させること' do
+      it 'タスクに付与しているHTMLのクラス属性（show-task、edit-task、destroy-task）が10件分表示されること' do
         visit tasks_path
-        tasks = all('tbody tr')
-        expect(tasks.count()).to eq 10
+        expect(all('.show-task').count()).to eq 10
+        expect(all('.edit-task').count()).to eq 10
+        expect(all('.destroy-task').count()).to eq 10
       end
     end
   end
