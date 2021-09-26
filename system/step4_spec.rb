@@ -910,7 +910,7 @@ RSpec.describe 'step4', type: :system do
       end
     end
 
-    describe '16.他人のタスク詳細画面、あるいはタスク編集画面にアクセスしようとした場合、タスク一覧画面に遷移させ「アクセス権限がありません」というフラッシュメッセージを表示させること' do
+    describe '16.他人のタスク詳細画面、あるいはタスク編集画面にアクセスしようとした場合、タスク一覧画面に遷移させ「本人以外アクセスできません」というフラッシュメッセージを表示させること' do
       let!(:second_user) { User.create(name: 'second_user_name', email: 'second_user@email.com', password: 'password') }
       let!(:second_user_task){Task.create(title: 'task_title', content: 'task_content', deadline_on: Date.today, priority: 0, status: 0, user_id: second_user.id)}
       before do
@@ -922,12 +922,12 @@ RSpec.describe 'step4', type: :system do
       it 'タスク詳細画面にアクセスした場合' do
         visit task_path(second_user_task)
         expect(current_path).to eq tasks_path
-        expect(page).to have_content 'アクセス権限がありません'
+        expect(page).to have_content '本人以外アクセスできません'
       end
       it 'タスク編集画面にアクセスした場合' do
         visit edit_task_path(second_user_task)
         expect(current_path).to eq tasks_path
-        expect(page).to have_content 'アクセス権限がありません'
+        expect(page).to have_content '本人以外アクセスできません'
       end
     end
 
