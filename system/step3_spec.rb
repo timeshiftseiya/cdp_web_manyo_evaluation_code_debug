@@ -5,7 +5,7 @@ RSpec.describe 'step3', type: :system do
   date_list = ["2025/10/01", "2025/12/01", "2025/01/01", "2025/05/01", "2025/03/01", "2025/11/01", "2025/02/01", "2025/09/01", "2025/04/01", "2025/01/01"]
   priority_list = [2, 0, 2, 1, 1, 0, 1, 2, 1, 2]
   status_list = [0, 2, 2, 0, 1, 1, 0, 2, 1, 2]
-  10.times { |n| let!(:"task_#{n+2}") { Task.create(created_at: Date.today+n, title: "task_title_#{n+2}", description: "task_description_#{n+2}", deadline_on: date_list[n], priority: priority_list[n], status: status_list[n]) } }
+  10.times { |n| let!(:"task_#{n+2}") { Task.create(created_at: Date.today+n, title: "task_title_#{n+2}", content: "task_content_#{n+2}", deadline_on: date_list[n], priority: priority_list[n], status: status_list[n]) } }
 
   describe '基本要件' do
     describe '1.終了期限の入力フォームはdate_fieldを使って実装すること' do
@@ -193,39 +193,39 @@ RSpec.describe 'step3', type: :system do
         it '終了期限、優先度「高」、ステータス「未着手」を登録できる' do
           visit new_task_path
           find('input[name="task[title]"]').set('task_title')
-          find('textarea[name="task[description]"]').set('task_description')
+          find('textarea[name="task[content]"]').set('task_content')
           find('input[name="task[deadline_on]"]').set(Date.today)
           select '高', from: 'task[priority]'
           select '未着手', from: 'task[status]'
           click_button '登録する'
           expect(page).to have_content 'task_title'
-          expect(page).to have_content 'task_description'
+          expect(page).to have_content 'task_content'
           expect(page).to have_content '高'
           expect(page).to have_content '未着手'
         end
         it '終了期限、優先度「中」、ステータス「着手中」を登録できる' do
           visit new_task_path
           find('input[name="task[title]"]').set('task_title')
-          find('textarea[name="task[description]"]').set('task_description')
+          find('textarea[name="task[content]"]').set('task_content')
           find('input[name="task[deadline_on]"]').set(Date.today.next_day)
           select '中', from: 'task[priority]'
           select '着手中', from: 'task[status]'
           click_button '登録する'
           expect(page).to have_content 'task_title'
-          expect(page).to have_content 'task_description'
+          expect(page).to have_content 'task_content'
           expect(page).to have_content '中'
           expect(page).to have_content '着手中'
         end
         it '終了期限、優先度「低」、ステータス「完了」を登録できる' do
           visit new_task_path
           find('input[name="task[title]"]').set('task_title')
-          find('textarea[name="task[description]"]').set('task_description')
+          find('textarea[name="task[content]"]').set('task_content')
           find('input[name="task[deadline_on]"]').set(Date.today.next_month)
           select '高', from: 'task[priority]'
           select '未着手', from: 'task[status]'
           click_button '登録する'
           expect(page).to have_content 'task_title'
-          expect(page).to have_content 'task_description'
+          expect(page).to have_content 'task_content'
           expect(page).to have_content '高'
           expect(page).to have_content '未着手'
         end
@@ -238,7 +238,7 @@ RSpec.describe 'step3', type: :system do
           select '未着手', from: 'task[status]'
           click_button '更新する'
           expect(page).to have_content 'task_title'
-          expect(page).to have_content 'task_description'
+          expect(page).to have_content 'task_content'
           expect(page).to have_content '高'
           expect(page).to have_content '未着手'
         end
@@ -249,7 +249,7 @@ RSpec.describe 'step3', type: :system do
           select '着手中', from: 'task[status]'
           click_button '更新する'
           expect(page).to have_content 'task_title'
-          expect(page).to have_content 'task_description'
+          expect(page).to have_content 'task_content'
           expect(page).to have_content '中'
           expect(page).to have_content '着手中'
         end
@@ -260,7 +260,7 @@ RSpec.describe 'step3', type: :system do
           select '未着手', from: 'task[status]'
           click_button '更新する'
           expect(page).to have_content 'task_title'
-          expect(page).to have_content 'task_description'
+          expect(page).to have_content 'task_content'
           expect(page).to have_content '高'
           expect(page).to have_content '未着手'
         end
@@ -270,7 +270,7 @@ RSpec.describe 'step3', type: :system do
       it '登録画面' do
         visit new_task_path
         find('input[name="task[title]"]').set('task_title')
-        find('textarea[name="task[description]"]').set('task_description')
+        find('textarea[name="task[content]"]').set('task_content')
         find('input[name="task[deadline_on]"]').set('')
         select '', from: 'task[priority]'
         select '', from: 'task[status]'
