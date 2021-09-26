@@ -16,9 +16,9 @@ class MyFormatter
     if notification.group.to_s.count(':') == 4
       @output << "# #{notification.group.description}\n"
     elsif notification.group.to_s.count(':') == 8
-      @output << "### {notification.group.description}\n"
+      @output << "### #{notification.group.description}\n"
     elsif notification.group.to_s.count(':') == 10
-      @output << "###### {notification.group.description}\n"
+      @output << "###### #{notification.group.description}\n"
     end
   end
 
