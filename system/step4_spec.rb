@@ -265,10 +265,10 @@ RSpec.describe 'step4', type: :system do
       end
       it 'ユーザ一覧画面には、各ユーザが作成しているタスクの数を表示させること' do
         10.times do
-          Task.create(title: 'task_title', description: 'task_description', deadline_on: Date.today, priority: 0, status: 0, user_id: user.id)
+          Task.create(title: 'task_title', content: 'task_content', deadline_on: Date.today, priority: 0, status: 0, user_id: user.id)
         end
         5.times do
-          Task.create(title: 'task_title', description: 'task_description', deadline_on: Date.today, priority: 0, status: 0, user_id: admin.id)
+          Task.create(title: 'task_title', content: 'task_content', deadline_on: Date.today, priority: 0, status: 0, user_id: admin.id)
         end
         visit root_path
         click_link 'ユーザ一覧'
@@ -325,7 +325,7 @@ RSpec.describe 'step4', type: :system do
       end
       it '登録したタスク情報が一覧で表示させること' do
         10.times do |n|
-          Task.create(title: "task_title_#{n}", description: "task_description_#{n}", deadline_on: Date.today, priority: n%3, status: n%3, user_id: user.id)
+          Task.create(title: "task_title_#{n}", content: "task_content_#{n}", deadline_on: Date.today, priority: n%3, status: n%3, user_id: user.id)
         end
         click_link 'ユーザ一覧'
         click_link '詳細', href: admin_user_path(user)
@@ -333,7 +333,7 @@ RSpec.describe 'step4', type: :system do
           expect(page).to have_content "task_title_#{n}"
         end
         10.times do |n|
-          expect(page).to have_content "task_description_#{n}"
+          expect(page).to have_content "task_content_#{n}"
         end
         expect(page).to have_content '高'
         expect(page).to have_content '中'
@@ -505,17 +505,17 @@ RSpec.describe 'step4', type: :system do
   end
 
   describe '機能要件' do
-    describe '9.ユーザを削除するリンクをクリックした際、確認ダイアログに「本当に削除しても良いですか？」という文字を表示させること' do
+    describe '9.ユーザを削除するリンクをクリックした際、確認ダイアログに「本当に削除してもよろしいですか？」という文字を表示させること' do
       before do
         visit new_session_path
         find('input[name="session[email]"]').set(admin.email)
         find('input[name="session[password]"]').set(admin.password)
         click_button 'ログイン'
       end
-      it 'ユーザを削除するリンクをクリックした際、確認ダイアログに"本当に削除しても良いですか？"という文字を表示させること' do
+      it 'ユーザを削除するリンクをクリックした際、確認ダイアログに"本当に削除してもよろしいですか？"という文字を表示させること' do
         visit admin_users_path
         click_link '削除', href: admin_user_path(user)
-        expect(page.driver.browser.switch_to.alert.text).to eq '本当に削除しても良いですか？'
+        expect(page.driver.browser.switch_to.alert.text).to eq '本当に削除してもよろしいですか？'
       end
     end
 
@@ -831,8 +831,8 @@ RSpec.describe 'step4', type: :system do
       end
       it 'ユーザとタスクにアソシエーションを組み、タスク一覧画面に自分が作成したタスクのみ表示させること' do
         5.times do |n|
-          Task.create(title: "task_title_#{n}", description: "task_description_#{n}", deadline_on: Date.today, priority: 0, status: 0, user_id: user.id)
-          Task.create(title: "second_user_task_title_#{n}", description: "task_description_#{n}", deadline_on: Date.today, priority: 0, status: 0, user_id: second_user.id)
+          Task.create(title: "task_title_#{n}", content: "task_content_#{n}", deadline_on: Date.today, priority: 0, status: 0, user_id: user.id)
+          Task.create(title: "second_user_task_title_#{n}", content: "task_content_#{n}", deadline_on: Date.today, priority: 0, status: 0, user_id: second_user.id)
         end
         visit tasks_path
         5.times do |n|
@@ -843,7 +843,7 @@ RSpec.describe 'step4', type: :system do
     end
 
     describe '14.ログインをせずにログイン画面とアカウント登録画面以外にアクセスした場合、ログインページに遷移させ「ログインしてください」というフラッシュメッセージを表示させること' do
-      let!(:task){Task.create(title: 'task_title', description: 'task_description', deadline_on: Date.today, priority: 0, status: 0, user_id: user.id)}
+      let!(:task){Task.create(title: 'task_title', content: 'task_content', deadline_on: Date.today, priority: 0, status: 0, user_id: user.id)}
       it 'タスク一覧画面にアクセスした場合' do
         visit tasks_path
         expect(current_path).to eq new_session_path
@@ -912,7 +912,7 @@ RSpec.describe 'step4', type: :system do
 
     describe '16.他人のタスク詳細画面、あるいはタスク編集画面にアクセスしようとした場合、タスク一覧画面に遷移させ「アクセス権限がありません」というフラッシュメッセージを表示させること' do
       let!(:second_user) { User.create(name: 'second_user_name', email: 'second_user@email.com', password: 'password') }
-      let!(:second_user_task){Task.create(title: 'task_title', description: 'task_description', deadline_on: Date.today, priority: 0, status: 0, user_id: second_user.id)}
+      let!(:second_user_task){Task.create(title: 'task_title', content: 'task_content', deadline_on: Date.today, priority: 0, status: 0, user_id: second_user.id)}
       before do
         visit new_session_path
         find('input[name="session[email]"]').set(user.email)
@@ -940,7 +940,7 @@ RSpec.describe 'step4', type: :system do
       end
       it 'ユーザを削除した際、そのユーザに紐づいているすべてのタスクが削除されること' do
         10.times do
-          Task.create(title: 'task_title', description: 'task_description', deadline_on: Date.today, priority: 0, status: 0, user_id: user.id)
+          Task.create(title: 'task_title', content: 'task_content', deadline_on: Date.today, priority: 0, status: 0, user_id: user.id)
         end
         visit admin_users_path
         click_link '削除', href: admin_user_path(user)
@@ -1009,29 +1009,29 @@ RSpec.describe 'step4', type: :system do
       end
     end
 
-    describe '20.管理者が一人しかいない状態でそのユーザを削除しようとした場合、モデルのコールバックを使って削除できないよう制御し、「管理者が0人になるため削除できません」というエラーメッセージを表示させること' do
+    describe '20.管理者が一人しかいない状態でそのユーザを削除しようとした場合、モデルのコールバックを使って削除できないよう制御し、「管理者権限を持つアカウントが0件になるため削除できません」というフラッシュメッセージを表示させること' do
       before do
         visit new_session_path
         find('input[name="session[email]"]').set(admin.email)
         find('input[name="session[password]"]').set(admin.password)
         click_button 'ログイン'
       end
-      it '管理者が一人しかいない状態でそのユーザを削除しようとした場合、モデルのコールバックを使って削除できないよう制御し、「管理者が0人になるため削除できません」というエラーメッセージを表示させること' do
+      it '管理者が一人しかいない状態でそのユーザを削除しようとした場合、モデルのコールバックを使って削除できないよう制御し、「管理者権限を持つアカウントが0件になるため削除できません」というフラッシュメッセージを表示させること' do
         visit admin_users_path
         click_link '削除', href: admin_user_path(admin)
         page.driver.browser.switch_to.alert.accept
-        expect(page).to have_content '管理者が0人になるため削除できません'
+        expect(page).to have_content '管理者権限を持つアカウントが0件になるため削除できません'
       end
     end
 
-    describe '21.管理者が一人しかいない状態でそのユーザから管理者権限を外す更新をしようとした場合、モデルのコールバックを使って更新できないよう制御し、「管理者が0人になるため権限を変更できません」というエラーメッセージを表示させること' do
+    describe '21.管理者が一人しかいない状態でそのユーザから管理者権限を外す更新をしようとした場合、モデルのコールバックを使って更新できないよう制御し、「管理者権限を持つアカウントが0件になるため更新できません」というエラーメッセージを表示させること' do
       before do
         visit new_session_path
         find('input[name="session[email]"]').set(admin.email)
         find('input[name="session[password]"]').set(admin.password)
         click_button 'ログイン'
       end
-      it '管理者が一人しかいない状態でそのユーザから管理者権限を外す更新をしようとした場合、モデルのコールバックを使って更新できないよう制御し、「管理者が0人になるため権限を変更できません」というエラーメッセージを表示させること' do
+      it '管理者が一人しかいない状態でそのユーザから管理者権限を外す更新をしようとした場合、モデルのコールバックを使って更新できないよう制御し、「管理者権限を持つアカウントが0件になるため更新できません」というエラーメッセージを表示させること' do
         visit edit_admin_user_path(admin)
         find('input[name="user[name]"]').set(admin.name)
         find('input[name="user[email]"]').set(admin.email)
@@ -1039,7 +1039,7 @@ RSpec.describe 'step4', type: :system do
         find('input[name="user[password_confirmation]"]').set(admin.password)
         uncheck 'user[admin]'
         click_button '更新する'
-        expect(page).to have_content '管理者が0人になるため権限を変更できません'
+        expect(page).to have_content '管理者権限を持つアカウントが0件になるため更新できません'
       end
     end
   end
