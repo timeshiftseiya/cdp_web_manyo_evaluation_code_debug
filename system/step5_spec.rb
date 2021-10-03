@@ -4,10 +4,10 @@ RSpec.describe 'step5', type: :system do
 
   let!(:user) { User.create(name: 'user_name', email: 'user@email.com', password: 'password') }
   let!(:admin) { User.create(name: 'admin_name', email: 'admin@email.com', password: 'password', admin: true) }
-  let!(:task_created_by_user){Task.create(title: 'task_title', description: 'task_description', deadline_on: Date.today, priority: 0, status: 0, user: user)}
-  let!(:task_created_by_admin){Task.create(title: 'task_title', description: 'task_description', deadline_on: Date.today, priority: 0, status: 0, user: admin)}
-  let!(:label_created_by_user) { Label.create(name: 'label_name', user: user)}
-  let!(:label_created_by_admin) { Label.create(name: 'label_name', user: admin)}
+  let!(:task_created_by_user){Task.create(title: 'task_title', content: 'task_content', deadline_on: Date.today, priority: 0, status: 0, user_id: user.id)}
+  let!(:task_created_by_admin){Task.create(title: 'task_title', content: 'task_content', deadline_on: Date.today, priority: 0, status: 0, user_id: admin.id)}
+  let!(:label_created_by_user) { Label.create(name: 'label_name', user_id: user.id)}
+  let!(:label_created_by_admin) { Label.create(name: 'label_name', user_id: admin.id)}
 
   describe '画面遷移要件' do
     describe '1.要件通りにパスのプレフィックスが使用できること' do
@@ -179,7 +179,7 @@ RSpec.describe 'step5', type: :system do
       end
       it 'ラベル一覧画面には、ラベルに紐づいているタスクの数を表示させること' do
         3.times do |t|
-          task = Task.create(title: "task_title_#{t+10}", description: "task_description_#{t+10}", deadline_on: Date.today, priority: 0, status: 0, user: user)
+          task = Task.create(title: "task_title_#{t+10}", content: "task_content_#{t+10}", deadline_on: Date.today, priority: 0, status: 0, user_id: user.id)
           task.labels << label_created_by_user
         end
         visit labels_path
@@ -212,7 +212,7 @@ RSpec.describe 'step5', type: :system do
         click_button 'ログイン'
       end
       it 'タスク編集画面では、タスクに紐づいているラベルにチェックが入った状態で表示させること' do
-        10.times { |t| Label.create!(id: t+1, name: "label_#{t+1}", user: user) }
+        10.times { |t| Label.create!(id: t+1, name: "label_#{t+1}", user_id: user.id) }
         task_created_by_user.labels << Label.find(2,7,9)
         visit edit_task_path(task_created_by_user)
         expect(page).to have_checked_field('label_2')
@@ -235,7 +235,7 @@ RSpec.describe 'step5', type: :system do
         click_button 'ログイン'
       end
       it 'タスクに紐づいているラベル名をすべて表示させること' do
-        10.times { |t| Label.create!(id: t+1, name: "label_#{t+1}", user: user) }
+        10.times { |t| Label.create!(id: t+1, name: "label_#{t+1}", user_id: user.id) }
         task_created_by_user.labels << Label.find(2,7,9)
         visit task_path(task_created_by_user)
         expect(page).to have_content 'ラベル'
@@ -273,7 +273,7 @@ RSpec.describe 'step5', type: :system do
         click_button '登録する'
         expect(page).to have_content 'ラベル一覧ページ'
       end
-      it 'ラベルの登録に成功した場合、ページタイトルに「ラベル登録ページ」が表示される' do
+      it 'ラベルの登録に失敗した場合、ページタイトルに「ラベル登録ページ」が表示される' do
         visit new_label_path
         find('input[name="label[name]"]').set('')
         click_button '登録する'
@@ -348,7 +348,7 @@ RSpec.describe 'step5', type: :system do
       it 'タスクを登録する際、ラベル付けできるようにすること' do
         visit new_task_path
         find('input[name="task[title]"]').set('task_title')
-        find('textarea[name="task[description]"]').set('task_description')
+        find('textarea[name="task[content]"]').set('task_content')
         find('input[name="task[deadline_on]"]').set(Date.today)
         select '高', from: 'task[priority]'
         select '未着手', from: 'task[status]'
@@ -358,7 +358,7 @@ RSpec.describe 'step5', type: :system do
       it 'タスクを編集する際、ラベル付けできるようにすること' do
         visit edit_task_path(task_created_by_user)
         find('input[name="task[title]"]').set('task_title')
-        find('textarea[name="task[description]"]').set('task_description')
+        find('textarea[name="task[content]"]').set('task_content')
         find('input[name="task[deadline_on]"]').set(Date.today)
         select '高', from: 'task[priority]'
         select '未着手', from: 'task[status]'
@@ -376,10 +376,10 @@ RSpec.describe 'step5', type: :system do
       end
       context 'タスク登録画面' do
         it '1つのタスクに対し、複数のラベルを登録できるようにすること' do
-          10.times { |t| Label.create!(name: "label_#{t+1}", user: user) }
+          10.times { |t| Label.create!(name: "label_#{t+1}", user_id: user.id) }
           visit new_task_path
           find('input[name="task[title]"]').set('task_title')
-          find('textarea[name="task[description]"]').set('task_description')
+          find('textarea[name="task[content]"]').set('task_content')
           find('input[name="task[deadline_on]"]').set(Date.today)
           select '高', from: 'task[priority]'
           select '未着手', from: 'task[status]'
@@ -399,10 +399,10 @@ RSpec.describe 'step5', type: :system do
       end
       context 'タスク編集画面' do
         it '1つのタスクに対し、複数のラベルを登録できるようにすること' do
-          10.times { |t| Label.create!(name: "label_#{t+1}", user: user) }
+          10.times { |t| Label.create!(name: "label_#{t+1}", user_id: user.id) }
           visit edit_task_path(task_created_by_user)
           find('input[name="task[title]"]').set('task_title')
-          find('textarea[name="task[description]"]').set('task_description')
+          find('textarea[name="task[content]"]').set('task_content')
           find('input[name="task[deadline_on]"]').set(Date.today)
           select '高', from: 'task[priority]'
           select '未着手', from: 'task[status]'
@@ -537,8 +537,8 @@ RSpec.describe 'step5', type: :system do
       end
       it 'ラベルを1つ指定し検索することで、そのラベルが貼られたタスクのみ表示させること' do
         5.times do |t|
-          Task.create(title: "task_title_#{t+2}", description: "task_description_#{t+2}", deadline_on: Date.today, priority: 0, status: 0, user: user)
-          task = Task.create(title: "task_title_#{t+7}", description: "task_description_#{t+7}", deadline_on: Date.today, priority: 0, status: 0, user: user)
+          Task.create(title: "task_title_#{t+2}", content: "task_content_#{t+2}", deadline_on: Date.today, priority: 0, status: 0, user_id: user.id)
+          task = Task.create(title: "task_title_#{t+7}", content: "task_content_#{t+7}", deadline_on: Date.today, priority: 0, status: 0, user_id: user.id)
           task.labels << label_created_by_user
         end
         visit tasks_path
