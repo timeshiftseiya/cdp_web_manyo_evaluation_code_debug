@@ -133,10 +133,10 @@ RSpec.describe 'step1', type: :system do
         find('.edit-task').click
         expect(page).to have_content 'Edit Task Page'
       end
-      it '「Update Task」をクリックした場合、ページタイトルに「Index Task Page」が表示される' do
+      it '「Update Task」をクリックした場合、ページタイトルに「Show Task Page」が表示される' do
         visit edit_task_path(task)
         find('#update-task').click
-        expect(page).to have_content 'Tasks Index Page'
+        expect(page).to have_content 'Show Task Page'
       end
       it '「Destroy」をクリックした場合、ページタイトルに「Tasks Index Page」が表示される' do
         visit tasks_path
