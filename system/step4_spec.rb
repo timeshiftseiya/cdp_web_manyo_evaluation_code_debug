@@ -980,32 +980,32 @@ RSpec.describe 'step4', type: :system do
       end
     end
 
-    describe '19.一般ユーザが管理画面（新たに作成した4つの画面のいずれか）にアクセスした場合、タスク一覧画面に遷移させ「管理者以外はアクセスできません」というフラッシュメッセージを表示させること' do
+    describe '19.一般ユーザが管理画面（新たに作成した4つの画面のいずれか）にアクセスした場合、タスク一覧画面に遷移させ「管理者以外アクセスできません」というフラッシュメッセージを表示させること' do
       before do
         visit new_session_path
         find('input[name="session[email]"]').set(user.email)
         find('input[name="session[password]"]').set(user.password)
         click_button 'ログイン'
       end
-      it 'ユーザ一覧画面にアクセスした場合、タスク一覧画面に遷移させ「管理者以外はアクセスできません」というフラッシュメッセージを表示させること' do
+      it 'ユーザ一覧画面にアクセスした場合、タスク一覧画面に遷移させ「管理者以外アクセスできません」というフラッシュメッセージを表示させること' do
         visit admin_users_path
         expect(current_path).to eq tasks_path
-        expect(page).to have_content '管理者以外はアクセスできません'
+        expect(page).to have_content '管理者以外アクセスできません'
       end
-      it 'ユーザ登録画面にアクセスした場合、タスク一覧画面に遷移させ「管理者以外はアクセスできません」というフラッシュメッセージを表示させること' do
+      it 'ユーザ登録画面にアクセスした場合、タスク一覧画面に遷移させ「管理者以外アクセスできません」というフラッシュメッセージを表示させること' do
         visit new_admin_user_path
         expect(current_path).to eq tasks_path
-        expect(page).to have_content '管理者以外はアクセスできません'
+        expect(page).to have_content '管理者以外アクセスできません'
       end
-      it 'ユーザ詳細画面にアクセスした場合、タスク一覧画面に遷移させ「管理者以外はアクセスできません」というフラッシュメッセージを表示させること' do
+      it 'ユーザ詳細画面にアクセスした場合、タスク一覧画面に遷移させ「管理者以外アクセスできません」というフラッシュメッセージを表示させること' do
         visit admin_user_path(user)
         expect(current_path).to eq tasks_path
-        expect(page).to have_content '管理者以外はアクセスできません'
+        expect(page).to have_content '管理者以外アクセスできません'
       end
-      it 'ユーザ編集画面にアクセスした場合、タスク一覧画面に遷移させ「管理者以外はアクセスできません」というフラッシュメッセージを表示させること' do
+      it 'ユーザ編集画面にアクセスした場合、タスク一覧画面に遷移させ「管理者以外アクセスできません」というフラッシュメッセージを表示させること' do
         visit edit_admin_user_path(user)
         expect(current_path).to eq tasks_path
-        expect(page).to have_content '管理者以外はアクセスできません'
+        expect(page).to have_content '管理者以外アクセスできません'
       end
     end
 
