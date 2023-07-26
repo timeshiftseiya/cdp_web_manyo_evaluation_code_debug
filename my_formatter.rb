@@ -5,7 +5,7 @@ class MyFormatter
   end
 
   def start(notification)
-    @output << "---\ntitle: issue feedback\n---\n"
+    @output << "issue feedback"
   end
 
   def example_passed(notification)
