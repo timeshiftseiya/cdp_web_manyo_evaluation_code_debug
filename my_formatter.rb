@@ -1,5 +1,5 @@
 class MyFormatter
-  RSpec::Core::Formatters.register self, :example_passed, :example_failed, :example_group_started, :start, :stop
+  RSpec::Core::Formatters.register self, :start, :example_passed, :example_failed, :example_group_started, :stop
   def initialize(output)
     @output = output
   end
